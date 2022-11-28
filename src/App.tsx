@@ -81,7 +81,7 @@ const registerNodes: IRegisterNode[] = [
   },
   {
     type: "condition",
-    name: "Condition",
+    name: "50%",
     displayComponent: ConditionNodeDisplay,
     configComponent: ConditionForm,
   },
@@ -148,13 +148,39 @@ const App = () => {
   const [modalIsOpen, setIsOpen] = React.useState(false);
 
   const [nodes, setNodes] = useState<INode[]>(defaultNodes);
-  const [code, setCode] = useState<string>('');
+  const [code, setCode] = useState<string>("");
 
   useEffect(() => {
-    nodes.map(node => {
+    handleChange(defaultNodes)
+  }, [])
 
-    })
-    
+  const handleChange = (nodes: INode[]) => {
+    console.log("nodes change", nodes);
+    setNodes(nodes);
+
+    const customCode = nodes.map((node) => {
+      const customCode2 =
+        node.children?.map((node2) => {
+          if (node2.type === "condition") {
+            return `uint256 path${node2.path
+              ?.toString()
+              .replace(",", "")
+              .replace(",", "")
+              .replace(",", "")
+              .replace(",", "")
+              .replace(",", "")
+              .replace(",", "")
+              .replace(",", "")} = balance * ${
+              parseInt(node2.name.replace("%", "")) / 100
+            };`;
+          } else return "";
+        }) || [];
+
+      return [...customCode2];
+    });
+
+    console.log(customCode.flat(Infinity));
+
     setCode(`pragma ton-solidity = 0.58.1;
 
     contract StategyBuilder {
@@ -164,24 +190,22 @@ const App = () => {
     
         function execute() external virtual {
           tvm.accept();
-    
+          
+          address contractAddress = 0x... // Fill in manually
           uint256 balance = contractAddress.call.gas(5000)
             .value(0)(bytes4(keccak256("balanceOf(address)")), address(this));
           uint256 path1 = balance * 0.5
           uint256 path2 = balance * 0.5
     
           contractAddress.call.gas(5000).value(0)(bytes4(keccak256("someFunc(bool, uint256)")), true, 3);
-    
-          ${'lol'}
-    
           dest.transfer(amount, bounce, 0);
-        }
-    }`)
-  }, nodes)
 
-  const handleChange = (nodes: INode[]) => {
-    console.log("nodes change", nodes);
-    setNodes(nodes);
+${customCode.flat(Infinity).map((code) => {
+  console.log(`          ${code}\n`);
+  return `          ${code}\n`;
+}).join('')}
+        }
+    }`);
   };
 
   const editorDidMount = (editor: any, monaco: any) => {

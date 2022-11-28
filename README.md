@@ -18,4 +18,4 @@ The app allows the execution of the following pipelines and more:
 
 ### Case 2: receive token + swap to multiple tokens according to configuration + rebalancing logic + withdraw method
 
-### Case 3: receive token + swap in 50/50 proportion + provide liquidity to pool + receive LP + lock LP into farming pool + claim rewards method with optional recipient address
+### Case 3: receive token + split in 50/50 proportion + provide liquidity to pool + receive LP + lock LP into farming pool + claim rewards method with optional recipient address

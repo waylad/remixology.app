@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import FlowBuilder, {
   INode,
   IRegisterNode,
@@ -8,7 +8,8 @@ import Modal from "react-modal";
 import SyntaxHighlighter from "react-syntax-highlighter";
 import { docco } from "react-syntax-highlighter/dist/esm/styles/hljs";
 
-import { ConfigForm } from "./ConfigForm";
+import { NodeForm } from "./NodeForm";
+import { ConditionForm } from "./ConditionForm";
 
 import "./App.css";
 
@@ -25,7 +26,7 @@ const customStyles = {
 
 const StartNodeDisplay: React.FC = () => {
   const node = useContext(NodeContext);
-  return <div className="start-node">Receive token</div>;
+  return <div className="start-node">Receive tokens</div>;
 };
 
 const EndNodeDisplay: React.FC = () => {
@@ -76,13 +77,13 @@ const registerNodes: IRegisterNode[] = [
     type: "node",
     name: "Node",
     displayComponent: NodeDisplay,
-    configComponent: ConfigForm,
+    configComponent: NodeForm,
   },
   {
     type: "condition",
     name: "Condition",
     displayComponent: ConditionNodeDisplay,
-    configComponent: ConfigForm,
+    configComponent: ConditionForm,
   },
   {
     type: "branch",
@@ -107,7 +108,7 @@ const defaultNodes = [
       {
         id: "node-cf9c8f7e-26dd-446c-b3fa-b2406fc7821a",
         type: "condition",
-        name: "Condition 10",
+        name: "40%",
         children: [
           {
             id: "node-f227cd08-a503-48b7-babf-b4047fc9dfa9",
@@ -121,7 +122,7 @@ const defaultNodes = [
       {
         id: "node-9d393627-24c0-469f-818a-319d9a678707",
         type: "condition",
-        name: "Condition 11",
+        name: "60%",
         children: [],
         path: ["1", "children", "1"],
       },
@@ -144,10 +145,39 @@ const defaultNodes = [
 
 const App = () => {
   let subtitle: any;
-  const [code, setCode] = useState('(num) => num + 1');
   const [modalIsOpen, setIsOpen] = React.useState(false);
 
   const [nodes, setNodes] = useState<INode[]>(defaultNodes);
+  const [code, setCode] = useState<string>('');
+
+  useEffect(() => {
+    nodes.map(node => {
+
+    })
+    
+    setCode(`pragma ton-solidity = 0.58.1;
+
+    contract StategyBuilder {
+        constructor() public {
+            tvm.accept();
+        }
+    
+        function execute() external virtual {
+          tvm.accept();
+    
+          uint256 balance = contractAddress.call.gas(5000)
+            .value(0)(bytes4(keccak256("balanceOf(address)")), address(this));
+          uint256 path1 = balance * 0.5
+          uint256 path2 = balance * 0.5
+    
+          contractAddress.call.gas(5000).value(0)(bytes4(keccak256("someFunc(bool, uint256)")), true, 3);
+    
+          ${'lol'}
+    
+          dest.transfer(amount, bounce, 0);
+        }
+    }`)
+  }, nodes)
 
   const handleChange = (nodes: INode[]) => {
     console.log("nodes change", nodes);
@@ -174,17 +204,21 @@ const App = () => {
 
   return (
     <div>
-      <FlowBuilder
-        nodes={nodes}
-        onChange={handleChange}
-        registerNodes={registerNodes}
-        historyTool
-        zoomTool
-      />
-      <SyntaxHighlighter language="javascript" style={docco}>
-        {code}
-      </SyntaxHighlighter>
-      <button onClick={openModal}>Open Modal</button>
+      <div className="app-grid">
+        <SyntaxHighlighter language="javascript" style={docco}>
+          {code}
+        </SyntaxHighlighter>
+
+        <FlowBuilder
+          nodes={nodes}
+          onChange={handleChange}
+          registerNodes={registerNodes}
+          historyTool
+          zoomTool
+        />
+      </div>
+
+      {/* <button onClick={openModal}>Generate Smart Contract</button>
       <Modal
         isOpen={modalIsOpen}
         onAfterOpen={afterOpenModal}
@@ -202,7 +236,7 @@ const App = () => {
           <button>inside</button>
           <button>the modal</button>
         </form>
-      </Modal>
+      </Modal> */}
     </div>
   );
 };

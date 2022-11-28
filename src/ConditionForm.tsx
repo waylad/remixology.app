@@ -2,7 +2,7 @@ import { Button, Form, Input } from "antd";
 import React, { useContext } from "react";
 import { BuilderContext, useDrawer } from "react-flow-builder";
 
-export const ConfigForm: React.FC = (props: any) => {
+export const ConditionForm: React.FC = (props: any) => {
   const { selectedNode: node } = useContext(BuilderContext);
 
   const { closeDrawer: cancel, saveDrawer: save } = useDrawer();
@@ -22,11 +22,11 @@ export const ConfigForm: React.FC = (props: any) => {
   return (
     <div>
       <Form form={form} initialValues={node?.data || { name: node?.name }}>
-        <Form.Item name="name" label="Name" rules={[{ required: true }]}>
+        <Form.Item name="name" label="Share" rules={[{ required: true }]}>
           <Input />
         </Form.Item>
       </Form>
-      <div>
+      <div className="buttons-grid">
         <Button onClick={cancel}>Cancel</Button>
         <Button type="primary" onClick={handleSubmit}>
           Submit

@@ -3,6 +3,17 @@
   background: #f7f7f7;
 }
 
+.app-grid {
+  display: grid;
+  grid-template-columns: 50% 50%;
+}
+
+.buttons-grid {
+  display: grid;
+  grid-template-columns: 100px 100px;
+  grid-gap: 20px;
+}
+
 .start-node, .end-node {
   height: 64px;
   width: 224px;

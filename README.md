@@ -1,46 +1,21 @@
-# Getting Started with Create React App
+## Remixology
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Remixology is a "Strategy builder" dApp, which allows users to easily generate smart contract pipelines.
 
-## Available Scripts
+# Demo Video
 
-In the project directory, you can run:
+Uplaoding...
 
-### `npm start`
+# Try Demo
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+https://remixology.app
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+# Test cases
 
-### `npm test`
+The app allows the execution of the following pipelines and more:
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### Case 1: receive token + swap a preconfigured portion of them + optionally send to preconfigured recipient address
 
-### `npm run build`
+### Case 2: receive token + swap to multiple tokens according to configuration + rebalancing logic + withdraw method
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+### Case 3: receive token + swap in 50/50 proportion + provide liquidity to pool + receive LP + lock LP into farming pool + claim rewards method with optional recipient address

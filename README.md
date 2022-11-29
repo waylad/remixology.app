@@ -1,10 +1,10 @@
 ## Remixology
 
-Remixology is a `Strategy builder` dApp which allows users to easily generate smart contract pipelines.
+Remixology.app is a `Strategy builder` dApp that allows users to easily generate smart contract pipelines.
 
 # Demo Video
 
-Uploading...
+https://youtu.be/uE9ktkM0nT0
 
 # Try Demo
 

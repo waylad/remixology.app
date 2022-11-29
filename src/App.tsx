@@ -94,21 +94,34 @@ const App = () => {
 
   const handleNode = (node: any) => {
     if (node.type === "condition") {
-      return `uint256 path${node.path
-        ?.toString()
-        .replace(",", "")
-        .replace(",", "")
-        .replace(",", "")
-        .replace(",", "")
-        .replace(",", "")
-        .replace(",", "")
-        .replace(",", "")} = balance * ${
+      return `
+          uint256 path${node.path
+            ?.toString()
+            .replace(",", "")
+            .replace(",", "")
+            .replace(",", "")
+            .replace(",", "")
+            .replace(",", "")
+            .replace(",", "")
+            .replace(",", "")} = balance * ${
         parseInt(node.name.replace("%", "")) / 100
       };`;
     } else if (node.type === "node") {
       // console.log('handleNode', node)
-      return `${node.data?.address}.call.gas(5000)
-            .value(0)(bytes4(keccak256("${node.data?.function}(bool, uint256)")), true, 3);`;
+      const parsedAbi = node.data ? JSON.parse(node.data?.abi) : undefined;
+      const funcTypes = parsedAbi.functions
+        .filter((func: any) => func.name === node.data?.function)[0]
+        ?.inputs?.map((funcType: any) => funcType?.type)
+        ?.toString();
+      const paramNames = parsedAbi.functions
+        .filter((func: any) => func.name === node.data?.function)[0]
+        ?.inputs?.map((funcType: any) => funcType?.name);
+      const paramVals = paramNames.map(
+        (paramName: string) => node.data?.[paramName]
+      );
+      return `
+          ${node.data?.address}.call.gas(5000)
+            .value(0)(bytes4(keccak256("${node.data?.function}(${funcTypes})")), ${paramVals});`;
     } else return "";
   };
 
@@ -118,22 +131,30 @@ const App = () => {
 
     const customCode = nodes.map((node) => {
       const treatedNode = handleNode(node);
-      const treatedChildrenNodes = node.children?.map((childrenNode) => {
-        const treatedChildrenNode = handleNode(childrenNode);
+      const treatedChildrenNodes =
+        node.children?.map((childrenNode) => {
+          const treatedChildrenNode = handleNode(childrenNode);
 
-        const treatedGrandChildrenNodes = childrenNode.children?.map((grandChildrenNode) => {
-          const treatedGrandChildrenNode = handleNode(grandChildrenNode);
+          const treatedGrandChildrenNodes =
+            childrenNode.children?.map((grandChildrenNode) => {
+              const treatedGrandChildrenNode = handleNode(grandChildrenNode);
 
-          const treatedGrandGrandChildrenNodes = grandChildrenNode.children?.map((grandGrandChildrenNode) => {
-            const treatedGrandGrandChildrenNode = handleNode(grandGrandChildrenNode);
-            return treatedGrandGrandChildrenNode
-          }) || [];
+              const treatedGrandGrandChildrenNodes =
+                grandChildrenNode.children?.map((grandGrandChildrenNode) => {
+                  const treatedGrandGrandChildrenNode = handleNode(
+                    grandGrandChildrenNode
+                  );
+                  return treatedGrandGrandChildrenNode;
+                }) || [];
 
-          return [treatedGrandChildrenNode, ...treatedGrandGrandChildrenNodes]
+              return [
+                treatedGrandChildrenNode,
+                ...treatedGrandGrandChildrenNodes,
+              ];
+            }) || [];
+
+          return [treatedChildrenNode, ...treatedGrandChildrenNodes];
         }) || [];
-
-        return [treatedChildrenNode, ...treatedGrandChildrenNodes]
-      }) || [];
 
       return [treatedNode, ...treatedChildrenNodes];
     });
@@ -148,7 +169,7 @@ const App = () => {
         function execute() external virtual {
           tvm.accept();
           
-          address tokenAddress = 0:... // Fill in manually
+          address tokenAddress = 0:17cf19d61ad45554e177f72f6f047785eac03c97031e4e4028d1346ff9ea7aa5;
           uint256 balance = tokenAddress.call.gas(5000)
             .value(0)(bytes4(keccak256("balanceOf(address)")), address(this));
 ${customCode

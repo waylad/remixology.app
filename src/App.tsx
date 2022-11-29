@@ -64,7 +64,7 @@ const registerNodes: IRegisterNode[] = [
   },
   {
     type: "node",
-    name: "Select Command",
+    name: "Command",
     displayComponent: NodeDisplay,
     configComponent: NodeForm,
   },
@@ -76,7 +76,7 @@ const registerNodes: IRegisterNode[] = [
   },
   {
     type: "branch",
-    name: "Branch",
+    name: "Split coins",
     conditionNodeType: "condition",
   },
 ];
@@ -106,14 +106,14 @@ const App = () => {
         parseInt(node.name.replace("%", "")) / 100
       };`;
     } else if (node.type === "node") {
-      console.log('handleNode', node)
+      // console.log('handleNode', node)
       return `${node.data?.address}.call.gas(5000)
             .value(0)(bytes4(keccak256("${node.data?.function}(bool, uint256)")), true, 3);`;
     } else return "";
   };
 
   const handleChange = (nodes: INode[]) => {
-    console.log("handleChange", nodes);
+    console.log(JSON.stringify(nodes));
     setNodes(nodes);
 
     const customCode = nodes.map((node) => {
@@ -123,7 +123,13 @@ const App = () => {
 
         const treatedGrandChildrenNodes = childrenNode.children?.map((grandChildrenNode) => {
           const treatedGrandChildrenNode = handleNode(grandChildrenNode);
-          return treatedGrandChildrenNode
+
+          const treatedGrandGrandChildrenNodes = grandChildrenNode.children?.map((grandGrandChildrenNode) => {
+            const treatedGrandGrandChildrenNode = handleNode(grandGrandChildrenNode);
+            return treatedGrandGrandChildrenNode
+          }) || [];
+
+          return [treatedGrandChildrenNode, ...treatedGrandGrandChildrenNodes]
         }) || [];
 
         return [treatedChildrenNode, ...treatedGrandChildrenNodes]

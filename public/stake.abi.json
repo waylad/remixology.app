@@ -1,7 +1,23 @@
 {
 	"functions": [
 		{
+			"name": "swap",
+			"inputs": [
+				{"name":"amount","type":"uint256"}
+			],
+			"outputs": [
+			]
+		},
+		{
 			"name": "stake",
+			"inputs": [
+				{"name":"amount","type":"uint256"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "lock",
 			"inputs": [
 				{"name":"amount","type":"uint256"}
 			],

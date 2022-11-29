@@ -64,7 +64,7 @@ const registerNodes: IRegisterNode[] = [
   },
   {
     type: "node",
-    name: "Command",
+    name: "Add Command",
     displayComponent: NodeDisplay,
     configComponent: NodeForm,
   },
@@ -76,7 +76,7 @@ const registerNodes: IRegisterNode[] = [
   },
   {
     type: "branch",
-    name: "Split coins",
+    name: "Add Split",
     conditionNodeType: "condition",
   },
 ];

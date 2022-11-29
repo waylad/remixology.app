@@ -75,7 +75,7 @@ const registerNodes: IRegisterNode[] = [
   },
   {
     type: "node",
-    name: "Node",
+    name: "Select Command",
     displayComponent: NodeDisplay,
     configComponent: NodeForm,
   },
@@ -154,29 +154,30 @@ const App = () => {
     handleChange(defaultNodes)
   }, [])
 
+  const handleNode = (node: any) => {
+    if (node.type === "condition") {
+      return `uint256 path${node.path
+        ?.toString()
+        .replace(",", "")
+        .replace(",", "")
+        .replace(",", "")
+        .replace(",", "")
+        .replace(",", "")
+        .replace(",", "")
+        .replace(",", "")} = balance * ${
+        parseInt(node.name.replace("%", "")) / 100
+      };`;
+    } else return "";
+  }
+
   const handleChange = (nodes: INode[]) => {
     console.log("nodes change", nodes);
     setNodes(nodes);
 
     const customCode = nodes.map((node) => {
-      const customCode2 =
-        node.children?.map((node2) => {
-          if (node2.type === "condition") {
-            return `uint256 path${node2.path
-              ?.toString()
-              .replace(",", "")
-              .replace(",", "")
-              .replace(",", "")
-              .replace(",", "")
-              .replace(",", "")
-              .replace(",", "")
-              .replace(",", "")} = balance * ${
-              parseInt(node2.name.replace("%", "")) / 100
-            };`;
-          } else return "";
-        }) || [];
-
-      return [...customCode2];
+      const treatedNodes2 = node.children?.map((node2) => handleNode(node2)) || [];
+      const treatedNode = handleNode(node)
+      return [treatedNode, ...treatedNodes2];
     });
 
     console.log(customCode.flat(Infinity));
@@ -191,14 +192,12 @@ const App = () => {
         function execute() external virtual {
           tvm.accept();
           
-          address contractAddress = 0x... // Fill in manually
+          address contractAddress = 0:... // Fill in manually
           uint256 balance = contractAddress.call.gas(5000)
             .value(0)(bytes4(keccak256("balanceOf(address)")), address(this));
-          uint256 path1 = balance * 0.5
-          uint256 path2 = balance * 0.5
     
-          contractAddress.call.gas(5000).value(0)(bytes4(keccak256("someFunc(bool, uint256)")), true, 3);
-          dest.transfer(amount, bounce, 0);
+          //contractAddress.call.gas(5000).value(0)(bytes4(keccak256("someFunc(bool, uint256)")), true, 3);
+          //dest.transfer(amount, bounce, 0);
 
 ${customCode.flat(Infinity).map((code) => {
   console.log(`          ${code}\n`);

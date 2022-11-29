@@ -3,9 +3,11 @@ import React, { useContext, useState } from "react";
 import { BuilderContext, useDrawer } from "react-flow-builder";
 
 export const NodeForm: React.FC = (props: any) => {
+  console.log(props)
+
   const { selectedNode: node } = useContext(BuilderContext);
-  const [abi, setAbi] = useState<any>(undefined);
-  const [selectedCommand, setSelectedCommand] = useState<string>("");
+  const [abi, setAbi] = useState<any>(props.node?.data?.abi ? JSON.parse(props.node?.data?.abi) : undefined);
+  const [selectedCommand, setSelectedCommand] = useState<string>(props.node?.data?.function);
 
   const { closeDrawer: cancel, saveDrawer: save } = useDrawer();
 

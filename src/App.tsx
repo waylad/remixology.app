@@ -109,14 +109,14 @@ const App = () => {
     } else if (node.type === "node") {
       // console.log('handleNode', node)
       const parsedAbi = node.data ? JSON.parse(node.data?.abi) : undefined;
-      const funcTypes = parsedAbi.functions
+      const funcTypes = parsedAbi?.functions
         .filter((func: any) => func.name === node.data?.function)[0]
         ?.inputs?.map((funcType: any) => funcType?.type)
         ?.toString();
-      const paramNames = parsedAbi.functions
+      const paramNames = parsedAbi?.functions
         .filter((func: any) => func.name === node.data?.function)[0]
         ?.inputs?.map((funcType: any) => funcType?.name);
-      const paramVals = paramNames.map(
+      const paramVals = paramNames?.map(
         (paramName: string) => node.data?.[paramName]
       );
       return `

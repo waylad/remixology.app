@@ -14,10 +14,12 @@ export const NodeForm: React.FC = (props: any) => {
   const handleSubmit = async () => {
     try {
       const values = await form.validateFields();
-      console.log("values", values);
+      // {name: 'Condition 100', function: 'mintNft', json-type: undefined, json: 'yolo'}
+      values.name = values.function
       save?.(values);
     } catch (error) {
       const values = form.getFieldsValue();
+      values.name = values.function
       save?.(values, !!error);
     }
   };
@@ -25,40 +27,40 @@ export const NodeForm: React.FC = (props: any) => {
   return (
     <div>
       <Form form={form} initialValues={node?.data || { name: node?.name }}>
-        <Form.Item name="name" label="Address" rules={[{ required: true }]}>
-          <Input />
+        <Form.Item name="address" label="Address" rules={[{ required: true }]}>
+          <Input placeholder="Contract address"/>
         </Form.Item>
 
-        {abi ? (
-          <div>
-            <Form.Item
-              name="function"
-              label="Function"
-              rules={[{ required: true }]}
+        {/* {abi ? ( */}
+        <div style={abi ? { display: "block" } : { display: "none" }}>
+          <Form.Item
+            name="function"
+            label="Function"
+            rules={[{ required: true }]}
+          >
+            <Select
+              style={{ width: "100%" }}
+              onChange={(e: string) => setSelectedCommand(e)}
             >
-              <Select
-                style={{ width: "100%" }}
-                onChange={(e: string) => setSelectedCommand(e)}
-              >
-                {abi.functions?.map((func: any) => (
-                  <Select.Option value={func.name}>{func.name}</Select.Option>
-                ))}
-              </Select>
-            </Form.Item>
-            <br />
-            {abi.functions
-              ?.filter((func: any) => func.name === selectedCommand)?.[0]
-              ?.inputs?.map((inpt: any) => (
-                <Form.Item
-                  name={inpt.name}
-                  label={inpt.name}
-                  rules={[{ required: true }]}
-                >
-                  <Input defaultValue="" placeholder={inpt.type} />
-                </Form.Item>
+              {abi?.functions?.map((func: any) => (
+                <Select.Option value={func.name}>{func.name}</Select.Option>
               ))}
-          </div>
-        ) : (
+            </Select>
+          </Form.Item>
+          {abi?.functions
+            ?.filter((func: any) => func.name === selectedCommand)?.[0]
+            ?.inputs?.map((inpt: any) => (
+              <Form.Item
+                name={inpt.name}
+                label={inpt.name}
+                rules={[{ required: true }]}
+              >
+                <Input defaultValue="" placeholder={inpt.type} />
+              </Form.Item>
+            ))}
+        </div>
+        {/* ) : ( */}
+        <div style={abi ? { display: "none" } : { display: "block" }}>
           <Form.Item name="abi" label="ABI" rules={[{ required: true }]}>
             <Input.TextArea
               rows={4}
@@ -66,7 +68,8 @@ export const NodeForm: React.FC = (props: any) => {
               onChange={(e: any) => setAbi(JSON.parse(e.target.value))}
             />
           </Form.Item>
-        )}
+        </div>
+        {/* )} */}
       </Form>
       <br />
       <div className="buttons-grid">

@@ -4,7 +4,6 @@ import FlowBuilder, {
   IRegisterNode,
   NodeContext,
 } from "react-flow-builder";
-import Modal from "react-modal";
 import SyntaxHighlighter from "react-syntax-highlighter";
 import { docco } from "react-syntax-highlighter/dist/esm/styles/hljs";
 
@@ -12,17 +11,6 @@ import { NodeForm } from "./NodeForm";
 import { ConditionForm } from "./ConditionForm";
 
 import "./App.css";
-
-const customStyles = {
-  content: {
-    top: "50%",
-    left: "50%",
-    right: "auto",
-    bottom: "auto",
-    marginRight: "-50%",
-    transform: "translate(-50%, -50%)",
-  },
-};
 
 const StartNodeDisplay: React.FC = () => {
   const node = useContext(NodeContext);
@@ -113,7 +101,8 @@ const defaultNodes = [
           {
             id: "node-f227cd08-a503-48b7-babf-b4047fc9dfa9",
             type: "node",
-            name: "Condition 100",
+            name: "0:17cf19d61ad45554e177f72f6f047785eac03c97031e4e4028d1346ff9ea7aa5",
+            command: "transfer",
             path: ["1", "children", "0", "children", "0"],
           },
         ],
@@ -132,7 +121,8 @@ const defaultNodes = [
   {
     id: "node-972401ca-c4db-4268-8780-5607876d8372",
     type: "node",
-    name: "Send to wallet",
+    name: "0:17cf19d61ad45554e177f72f6f047785eac03c97031e4e4028d1346ff9ea7aa5",
+    command: "transfer",
     path: ["2"],
   },
   {
@@ -151,8 +141,8 @@ const App = () => {
   const [code, setCode] = useState<string>("");
 
   useEffect(() => {
-    handleChange(defaultNodes)
-  }, [])
+    handleChange(defaultNodes);
+  }, []);
 
   const handleNode = (node: any) => {
     if (node.type === "condition") {
@@ -167,20 +157,37 @@ const App = () => {
         .replace(",", "")} = balance * ${
         parseInt(node.name.replace("%", "")) / 100
       };`;
+    } else if (node.type === "node") {
+      console.log('handleNode', node)
+      return `${node.data?.address}.call.gas(5000)
+            .value(0)(bytes4(keccak256("${node.data?.function}(bool, uint256)")), true, 3);`;
     } else return "";
-  }
+  };
 
   const handleChange = (nodes: INode[]) => {
-    console.log("nodes change", nodes);
+    console.log("handleChange", nodes);
     setNodes(nodes);
 
     const customCode = nodes.map((node) => {
-      const treatedNodes2 = node.children?.map((node2) => handleNode(node2)) || [];
-      const treatedNode = handleNode(node)
-      return [treatedNode, ...treatedNodes2];
-    });
+      const treatedNode = handleNode(node);
+      const treatedChildrenNodes = node.children?.map((childrenNode) => {
+        const treatedChildrenNode = handleNode(childrenNode);
+        return treatedChildrenNode
+      }) || [];
 
-    console.log(customCode.flat(Infinity));
+      return [treatedNode, ...treatedChildrenNodes];
+      // const treatedNodes2 =
+      //   node.children?.map((node2) => {
+      //     const treatedNodes3 =
+      //       node.children?.map((node3) => handleNode(node3)) || [];
+
+      //     const treatedNode4 = handleNode(node2);
+      //     return [treatedNode4, ...treatedNodes3];
+      //   }) || [];
+
+      // const treatedNode = handleNode(node);
+      // return [treatedNode, ...treatedNodes2];
+    });
 
     setCode(`pragma ton-solidity = 0.58.1;
 
@@ -199,31 +206,16 @@ const App = () => {
           //contractAddress.call.gas(5000).value(0)(bytes4(keccak256("someFunc(bool, uint256)")), true, 3);
           //dest.transfer(amount, bounce, 0);
 
-${customCode.flat(Infinity).map((code) => {
-  console.log(`          ${code}\n`);
-  return `          ${code}\n`;
-}).join('')}
+${customCode
+  .flat(Infinity)
+  .map((code) => {
+    console.log(`          ${code}\n`);
+    return `          ${code}\n`;
+  })
+  .join("")}
         }
     }`);
   };
-
-  const editorDidMount = (editor: any, monaco: any) => {
-    console.log("editorDidMount", editor);
-    editor.focus();
-  };
-
-  function openModal() {
-    setIsOpen(true);
-  }
-
-  function afterOpenModal() {
-    // references are now sync'd and can be accessed.
-    subtitle.style.color = "#f00";
-  }
-
-  function closeModal() {
-    setIsOpen(false);
-  }
 
   return (
     <div>
@@ -240,26 +232,6 @@ ${customCode.flat(Infinity).map((code) => {
           zoomTool
         />
       </div>
-
-      {/* <button onClick={openModal}>Generate Smart Contract</button>
-      <Modal
-        isOpen={modalIsOpen}
-        onAfterOpen={afterOpenModal}
-        onRequestClose={closeModal}
-        style={customStyles}
-        contentLabel="Example Modal"
-      >
-        <h2 ref={(_subtitle) => (subtitle = _subtitle)}>Hello</h2>
-        <button onClick={closeModal}>close</button>
-        <div>I am a modal</div>
-        <form>
-          <input />
-          <button>tab navigation</button>
-          <button>stays</button>
-          <button>inside</button>
-          <button>the modal</button>
-        </form>
-      </Modal> */}
     </div>
   );
 };
